@@ -2,19 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Módulo: Lógica de Negócio e Gamificação
-     * Gerencia o progresso do usuário e a liberação da oferta.
+     * Gerencia o progresso do usuário e a recompensa visual.
      */
     const setupGamification = () => {
         const progressBar = document.getElementById('progress-bar');
         const progressText = document.getElementById('progress-text');
         const planosSection = document.getElementById('planos');
         const vitalicioPlanCard = document.getElementById('vitalicio-plan-card');
-        const vitalicioPriceContainer = document.getElementById('vitalicio-price-container');
-        const vitalicioCheckoutLink = document.getElementById('vitalicio-checkout-link');
-
-        // !! IMPORTANTE !!
-        // Substitua a URL abaixo pelo seu link de checkout da OFERTA SECRETA (preço com desconto).
-        const REWARD_CHECKOUT_URL = "URL_DA_SUA_OFERTA_SECRETA_AQUI"; 
         
         let journeyCompleted = false;
         const MAX_POINTS = 100;
@@ -39,30 +33,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (percentage === 100 && !journeyCompleted) {
                 journeyCompleted = true;
                 setTimeout(() => {
-                    if(window.Notiflix) Notiflix.Notify.Success('<strong>RECOMPENSA LIBERADA!</strong> Você desbloqueou a oferta secreta no Plano Vitalício.', { plainText: false, timeout: 5000, fontSize: '16px', width: '320px' });
+                    if(window.Notiflix) {
+                        Notiflix.Notify.Success('<strong>RECOMPENSA LIBERADA!</strong> Você provou seu valor. Confira a melhor oferta que preparamos.', { plainText: false, timeout: 5000, fontSize: '16px', width: '320px' });
+                    }
                     
-                    if(vitalicioPlanCard && vitalicioPriceContainer && vitalicioCheckoutLink) {
-                        vitalicioPriceContainer.style.opacity = '0';
-                        
-                        setTimeout(() => {
-                            vitalicioPriceContainer.innerHTML = `
-                                <p class="text-xl text-red-400/70 line-through">De R$39,97</p>
-                                <p class="font-teko text-5xl sm:text-6xl font-bold text-white mb-6">R$14<span class="text-3xl text-red-300">,97</span></p>
-                            `;
-                            vitalicioPriceContainer.style.opacity = '1';
-
-                            // ATUALIZA O LINK DE CHECKOUT PARA O DA OFERTA SECRETA
-                            vitalicioCheckoutLink.href = REWARD_CHECKOUT_URL;
-                            // Atualiza o valor do plano no data attribute para o tracking correto
-                            vitalicioPlanCard.dataset.planValue = "14.97";
-
-                        }, 500);
-
+                    if(vitalicioPlanCard) {
                         vitalicioPlanCard.classList.remove('border-red-500', 'pulse-glow');
                         vitalicioPlanCard.classList.add('border-yellow-400');
                         vitalicioPlanCard.style.boxShadow = '0 0 40px rgba(250, 204, 21, 0.5)';
                     }
-                    if(planosSection) planosSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    if(planosSection) {
+                        planosSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 }, 500);
             }
         };
@@ -182,20 +165,157 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         renderFaq();
     };
-
+    
     /**
      * Módulo: Simulador do Aplicativo
      */
     const setupAppSimulator = () => {
-        // ... (toda a lógica de simulação do app, desde 'const mainToggleBtn' até o final, vai aqui)
-        // Nenhuma alteração necessária nesta parte da lógica, apenas a transferência para esta função.
+        const mainToggleBtn = document.getElementById('app-main-toggle-btn');
+        const floatingPanel = document.getElementById('app-floating-panel');
+        const navButtons = document.querySelectorAll('.app-nav-button');
+        const panelPages = document.querySelectorAll('.app-panel-page');
+        const statusIndicators = document.getElementById('status-indicators');
+        const quickFunctions = document.getElementById('quick-functions');
+        const statLatency = document.querySelector('[data-stat="latency"]');
+        const statFps = document.querySelector('[data-stat="fps"]');
+        const statPrecision = document.querySelector('[data-stat="precision"]');
+        const allToggles = document.querySelectorAll('input[type="checkbox"]');
+        const sensiSliders = document.querySelectorAll('.sensi-slider');
+        const applyOptimizationBtn = document.getElementById('apply-optimization-btn');
+        const generateConfigButton = document.getElementById('generate-config-button');
+        const aiResultDiv = document.getElementById('ai-result');
+        let isAppOn = false;
+        const BASE_LATENCY = 45, BASE_FPS = 75, MAX_FPS = 120, BASE_PRECISION = 20;
+
+        function updateDashboardStats() {
+            if (!isAppOn || !statLatency || !statFps || !statPrecision) {
+                if(statLatency) statLatency.textContent = '--';
+                if(statFps) statFps.textContent = '--';
+                if(statPrecision) statPrecision.textContent = '+0%';
+                if(statLatency) [statLatency, statFps, statPrecision].forEach(el => el.classList.remove('text-green-400'));
+                return
+            };
+            let currentLatency = BASE_LATENCY, currentFps = BASE_FPS, currentPrecision = BASE_PRECISION;
+            document.querySelectorAll('input[data-effect]:checked').forEach(toggle => {
+                const effect = toggle.dataset.effect, value = parseInt(toggle.dataset.value, 10);
+                if (effect === 'latency') currentLatency += value;
+                if (effect === 'fps') currentFps += value;
+                if (effect === 'precision') currentPrecision += value;
+            });
+            let totalSensi = 0;
+            sensiSliders.forEach(slider => { totalSensi += parseInt(slider.value, 10) });
+            currentPrecision += Math.max(0, Math.round((totalSensi / sensiSliders.length - 100) / 10));
+            statLatency.textContent = `${Math.max(17,currentLatency)}ms`;
+            statFps.textContent = Math.min(MAX_FPS, currentFps);
+            statPrecision.textContent = `+${currentPrecision}%`;
+            [statLatency, statFps, statPrecision].forEach(el => el.classList.add('text-green-400'));
+        }
+        
+        if(mainToggleBtn){
+            mainToggleBtn.addEventListener('click', () => {
+                const toggleSpan = mainToggleBtn.querySelector('span');
+                const toggleBg = mainToggleBtn.querySelector('div.bg-gray-800');
+                isAppOn = !isAppOn;
+                if (isAppOn) {
+                    toggleSpan.textContent = 'ON';
+                    toggleSpan.classList.remove('text-[#E53935]');
+                    toggleSpan.classList.add('text-green-500');
+                    if(toggleBg) toggleBg.classList.add('bg-[#E53935]');
+                    if(floatingPanel) floatingPanel.style.display = 'block';
+                    mainToggleBtn.classList.remove('pulse-attention');
+                    if(statusIndicators) statusIndicators.classList.remove('opacity-50');
+                    if(quickFunctions) quickFunctions.classList.remove('opacity-50', 'pointer-events-none');
+                    window.completeTask('activated');
+                } else {
+                    toggleSpan.textContent = 'OFF';
+                    toggleSpan.classList.add('text-[#E53935]');
+                    toggleSpan.classList.remove('text-green-500');
+                    if(toggleBg) toggleBg.classList.remove('bg-[#E53935]');
+                    if(floatingPanel) floatingPanel.style.display = 'none';
+                    mainToggleBtn.classList.add('pulse-attention');
+                    if(statusIndicators) statusIndicators.classList.add('opacity-50');
+                    if(quickFunctions) quickFunctions.classList.add('opacity-50', 'pointer-events-none');
+                }
+                updateDashboardStats();
+            });
+        }
+        
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const pageId = button.dataset.page;
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                panelPages.forEach(page => { if(page) page.style.display = page.id === pageId ? 'block' : 'none'; });
+            });
+        });
+
+        sensiSliders.forEach(slider => {
+            const valueDisplay = slider.previousElementSibling.querySelector('[data-sensi-value]');
+            slider.addEventListener('input', (event) => { if(valueDisplay) valueDisplay.textContent = event.target.value; updateDashboardStats(); });
+        });
+
+        allToggles.forEach(toggle => {
+            toggle.addEventListener('change', () => {
+                const syncId = toggle.dataset.sync;
+                if (syncId) { const targetToggle = document.getElementById(syncId); if(targetToggle) targetToggle.checked = toggle.checked; }
+                const mainId = toggle.id;
+                document.querySelectorAll(`[data-sync="${mainId}"]`).forEach(t => { t.checked = toggle.checked; });
+                
+                if (toggle.dataset.gamifyTask === 'aim') {
+                    const checkedAimToggles = document.querySelectorAll('input[data-gamify-task="aim"]:checked').length;
+                    if (checkedAimToggles >= 3) {
+                        window.completeTask('testedAim');
+                    }
+                }
+                updateDashboardStats();
+            });
+        });
+
+        document.querySelectorAll('.clickable-function').forEach(func => {
+            func.addEventListener('click', (e) => {
+                if (!e.target.matches('input') && !e.target.matches('label')) {
+                    const checkbox = func.querySelector('input[type="checkbox"]');
+                    if (checkbox) { checkbox.checked = !checkbox.checked; checkbox.dispatchEvent(new Event('change')); }
+                }
+                func.classList.add('clicked');
+                func.addEventListener('animationend', () => { func.classList.remove('clicked'); }, { once: true });
+            });
+        });
+        
+        if(generateConfigButton){
+            generateConfigButton.addEventListener('click', () => {
+                if(aiResultDiv) {
+                    aiResultDiv.classList.remove('hidden');
+                    aiResultDiv.innerHTML = `<p class="text-yellow-400 text-center font-bold">Função indisponível na demonstração.<br><span class="font-normal text-xs text-gray-300">Disponível apenas na versão completa.</span></p>`;
+                }
+            });
+        }
+
+        if(applyOptimizationBtn) {
+            applyOptimizationBtn.addEventListener('click', () => {
+                const originalText = applyOptimizationBtn.innerHTML;
+                applyOptimizationBtn.innerHTML = `<i class="fa-solid fa-spinner spin-loader"></i> Otimizando...`;
+                applyOptimizationBtn.disabled = true;
+                setTimeout(() => {
+                    applyOptimizationBtn.innerHTML = `<i class="fa-solid fa-check"></i> Otimizado!`;
+                    applyOptimizationBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                    applyOptimizationBtn.classList.add('bg-green-600');
+                    window.completeTask('optimized');
+                    setTimeout(() => {
+                        applyOptimizationBtn.innerHTML = originalText;
+                        applyOptimizationBtn.disabled = false;
+                        applyOptimizationBtn.classList.remove('bg-green-600');
+                        applyOptimizationBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                    }, 2000);
+                }, 1500);
+            });
+        }
     };
 
     /**
      * Módulo: Utilitários e Efeitos Visuais
      */
     const setupUtilities = () => {
-        // Lógica de Rolagem Suave
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -206,11 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Lógica do Scroll Reveal
         const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('animate-fade-in') }) }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         
-        // Lógica das Notificações Falsas (Social Proof)
         if (window.Notiflix) { 
             setInterval(() => { 
                 const messages = ["<strong>Sucesso!</strong> Alguém acabou de garantir o acesso vitalício.", "<strong>Aproveite!</strong> Um jogador garantiu o acesso vitalício.", "<strong>Imperdível!</strong> Mais um jogador comprou o acesso permanente."];
@@ -219,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 10000 + Math.random() * 5000);
         }
 
-        // Propagação de parâmetros de URL para os links de checkout
         const params = new URLSearchParams(window.location.search);
         if ([...params].length > 0) {
             document.querySelectorAll(".purchase-link").forEach(link => {
