@@ -2,13 +2,14 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplicativo Noskill - A Mira Perfeita ao seu Alcance</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/notiflix@2.6.0/dist/notiflix-aio-2.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="./style.css">
 
     <script>
       window.pixelId = "68c454a5a2f78399c64b9243";
@@ -70,6 +71,40 @@
         </section>
 
         <section id="interactive-panel" class="flex flex-col items-center justify-center py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-black">
+            <div class="text-center mb-8 max-w-3xl mx-auto reveal">
+                <h2 class="font-teko text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase">
+                    Controle Total na Palma da Sua Mão
+                </h2>
+                <p class="text-lg text-gray-400 mt-2">
+                    Prove que você é brabo! Complete a <span class="font-bold text-white">Jornada do Capudo</span> e libere uma <span class="font-bold text-red-500">oferta secreta</span> só pra você.
+                </p>
+            </div>
+            <div id="gamification-progress" class="w-full max-w-4xl mx-auto mb-6 reveal">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="font-teko text-xl text-yellow-400 uppercase tracking-wider">Jornada do Capudo</p>
+                    <p id="progress-text" class="font-bold text-lg text-white">0%</p>
+                </div>
+                <div class="w-full bg-gray-800 rounded-full h-4 border border-gray-700">
+                    <div id="progress-bar" class="bg-gradient-to-r from-yellow-500 to-red-500 h-full rounded-full progress-bar-inner" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div class="w-full max-w-4xl mx-auto mb-8 reveal text-center">
+                <p class="text-gray-400 mb-4">Para desbloquear sua recompensa, complete as missões:</p>
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6">
+                    <div id="task-1" class="flex items-center gap-2 text-gray-500 transition-colors duration-300">
+                        <i class="far fa-circle-check"></i>
+                        <span class="font-semibold text-sm">1. Ative o Painel</span>
+                    </div>
+                    <div id="task-2" class="flex items-center gap-2 text-gray-500 transition-colors duration-300">
+                        <i class="far fa-circle-check"></i>
+                        <span class="font-semibold text-sm">2. Teste 3 Funções de Mira</span>
+                    </div>
+                    <div id="task-3" class="flex items-center gap-2 text-gray-500 transition-colors duration-300">
+                        <i class="far fa-circle-check"></i>
+                        <span class="font-semibold text-sm">3. Aplique as Otimizações</span>
+                    </div>
+                </div>
+            </div>
             </section>
 
         <section id="bonus" class="py-12 bg-red-900/20 border-y-2 border-red-500/30">
@@ -97,14 +132,6 @@
                     </div>
 
                     <div id="vitalicio-plan-card" class="bg-gradient-to-b from-red-900/50 to-gray-900/50 border-2 border-red-500 p-8 text-center relative transform lg:scale-110 shadow-2xl shadow-red-500/20 h-full flex flex-col rounded-2xl pulse-glow" data-plan-name="Plano Vitalício" data-plan-value="19.97">
-                        <div class="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2">
-                            <span class="inline-block px-6 py-2 text-sm text-white bg-red-600 rounded-full font-bold uppercase tracking-wider shadow-lg">ÚLTIMAS VAGAS</span>
-                        </div>
-                        <h3 class="font-teko text-3xl sm:text-4xl font-bold text-white uppercase">Plano Vitalício</h3>
-                        <p class="text-red-300 mb-4">Pague uma vez, use para sempre</p>
-                        <div id="vitalicio-price-container">
-                            <p class="font-teko text-5xl sm:text-6xl font-bold text-white mb-6">R$19<span class="text-3xl text-red-300">,97</span></p>
-                        </div>
                         <a id="vitalicio-checkout-link" href="https://pay.noskillsensi.com.br/JbSgkcPQ?af=KlZaHQRHXTbj" target="_blank" rel="noopener noreferrer" class="purchase-link w-full mt-auto inline-block text-center bg-red-600 hover:bg-red-700 text-white px-6 py-4 rounded-lg font-bold transform hover:scale-105">QUERO ACESSO VITALÍCIO</a>
                     </div>
 
@@ -129,7 +156,7 @@
     <footer class="py-8 border-t border-gray-800 bg-black">
          </footer>
 
-    <script src="app.js" defer></script>
+    <script src="./app.js" defer></script>
 
 </body>
 </html>
